@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:timeline_editor/positioned_list_view.dart';
+import 'package:timeline_editor/timeline.dart';
 
 void main() {
   runApp(const MyApp());
@@ -29,30 +30,40 @@ class TimeLineHome extends StatefulWidget {
 }
 
 class _TimeLineHomeState extends State<TimeLineHome> {
-  late final ScrollController controllerLeft;
-  late final ScrollController controllerRight;
+  // String? titleLeft, titleRight;
+
+
+  late final ScrollController _controllerLeft;
+  late final ScrollController _controllerCenter;
+  late final ScrollController _controllerRight;
 
   @override
   void initState() {
     super.initState();
-    controllerLeft = ScrollController();
-    controllerRight = ScrollController();
-    
-    controllerLeft.addListener(() {
-      print('l: ${controllerLeft.offset}');
-      controllerRight.jumpTo(controllerLeft.offset);
+    _controllerLeft = ScrollController();
+    _controllerCenter = ScrollController();
+    _controllerRight = ScrollController();
+
+
+    _controllerLeft.addListener(() {
+      _controllerCenter.jumpTo(_controllerLeft.offset);
+      _controllerRight.jumpTo(_controllerLeft.offset);
     });
-    controllerRight.addListener(() {
-      print('r: ${controllerRight.offset}');
-      controllerLeft.jumpTo(controllerRight.offset);
+    _controllerCenter.addListener(() {
+      _controllerLeft.jumpTo(_controllerRight.offset);
+      _controllerRight.jumpTo(_controllerLeft.offset);
+    });
+    _controllerRight.addListener(() {
+      _controllerLeft.jumpTo(_controllerRight.offset);
+      _controllerCenter.jumpTo(_controllerLeft.offset);
     });
   }
 
 
   @override
   void dispose() {
-    controllerLeft.dispose();
-    controllerRight.dispose();
+    _controllerLeft.dispose();
+    _controllerRight.dispose();
     super.dispose();
   }
 
@@ -66,7 +77,7 @@ class _TimeLineHomeState extends State<TimeLineHome> {
             width: MediaQuery.of(context).size.width / 2 - 18,
             child: const TextField(
               decoration: InputDecoration(
-                  hintText: 'Unknown column left'
+                  hintText: 'Untitled left column'
               ),
             )
           ),
@@ -75,7 +86,7 @@ class _TimeLineHomeState extends State<TimeLineHome> {
               width: MediaQuery.of(context).size.width / 2 - 18,
               child: const TextField(
                 decoration: InputDecoration(
-                  hintText: 'Unknown column right'
+                  hintText: 'Untitled right column'
                 ),
                 textAlign: TextAlign.end,
               )
@@ -89,7 +100,7 @@ class _TimeLineHomeState extends State<TimeLineHome> {
         Expanded(
           child: PositionedListView(
             unitHeight: 20,
-            controller: controllerLeft,
+            controller: _controllerLeft,
             children: {
               1: const ListTile(title: Text('1')),
               3: const ListTile(title: Text('2')),
@@ -99,13 +110,21 @@ class _TimeLineHomeState extends State<TimeLineHome> {
             },
           ),
         ),
-        const VerticalDivider(
-          thickness: 3.0,
+        SizedBox(
+          height: 300 * 20,
+          width: 40,
+          child: TimeLine(
+            controller: _controllerCenter,
+            unitHeight: 20,
+            minTime: 0,
+            maxTime: 300,
+            stepSize: 10,
+          ),
         ),
         Expanded(
           child: PositionedListView(
             unitHeight: 20,
-            controller: controllerRight,
+            controller: _controllerRight,
             children: {
               1: const ListTile(title: Text('1')),
               3: const ListTile(title: Text('2')),
