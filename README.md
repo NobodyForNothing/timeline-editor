@@ -2,15 +2,6 @@
 
 A editor for comparing historical events over time.
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### WIP
+Current version: 
+![screenshot](https://github.com/NobodyForNothing/timeline-editor/assets/82763757/36d07731-40c7-4f35-b220-9d0744d9a8b4)
