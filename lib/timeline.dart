@@ -7,7 +7,6 @@ class TimeLine extends StatelessWidget {
     required this.maxTime,
     required this.stepSize,
     required this.unitHeight,
-    this.controller,
   }): assert(maxTime > minTime);
 
   final int minTime;
@@ -17,13 +16,11 @@ class TimeLine extends StatelessWidget {
   /// How high one unit is rendered on the screen.
   final double unitHeight;
 
-  final ScrollController? controller;
-
   static const double _kLabelHeight = 20;
 
   @override
   Widget build(BuildContext context) => ListView.builder(
-    controller: controller,
+    physics: const NeverScrollableScrollPhysics(),
     itemCount: ((maxTime - minTime) ~/ stepSize) * 2,
     itemBuilder: (BuildContext context, int idx) {
       if (idx % 2 == 1) {

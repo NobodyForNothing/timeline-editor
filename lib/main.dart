@@ -30,40 +30,17 @@ class TimeLineHome extends StatefulWidget {
 }
 
 class _TimeLineHomeState extends State<TimeLineHome> {
+  static const double _kUnitHeight = 10.0;
+
   // String? titleLeft, titleRight;
-
-
-  late final ScrollController _controllerLeft;
-  late final ScrollController _controllerCenter;
-  late final ScrollController _controllerRight;
 
   @override
   void initState() {
     super.initState();
-    _controllerLeft = ScrollController();
-    _controllerCenter = ScrollController();
-    _controllerRight = ScrollController();
-
-
-    _controllerLeft.addListener(() {
-      _controllerCenter.jumpTo(_controllerLeft.offset);
-      _controllerRight.jumpTo(_controllerLeft.offset);
-    });
-    _controllerCenter.addListener(() {
-      _controllerLeft.jumpTo(_controllerRight.offset);
-      _controllerRight.jumpTo(_controllerLeft.offset);
-    });
-    _controllerRight.addListener(() {
-      _controllerLeft.jumpTo(_controllerRight.offset);
-      _controllerCenter.jumpTo(_controllerLeft.offset);
-    });
   }
-
 
   @override
   void dispose() {
-    _controllerLeft.dispose();
-    _controllerRight.dispose();
     super.dispose();
   }
 
@@ -94,47 +71,50 @@ class _TimeLineHomeState extends State<TimeLineHome> {
         ],
       ),
     ),
-    body: Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Expanded(
-          child: PositionedListView(
-            unitHeight: 20,
-            controller: _controllerLeft,
-            children: {
-              1: const ListTile(title: Text('1')),
-              3: const ListTile(title: Text('2')),
-              4: const ListTile(title: Text('3')),
-              12: const ListTile(title: Text('A')),
-              70: const ListTile(title: Text('4')),
-            },
+    body: SingleChildScrollView(
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            width: MediaQuery.of(context).size.width / 2 - 20,
+            height: _kUnitHeight * 70 + 100,
+            child: PositionedListView(
+              unitHeight: _kUnitHeight,
+              children: {
+                1: const ListTile(title: Text('1')),
+                3: const ListTile(title: Text('2')),
+                4: const ListTile(title: Text('3')),
+                12: const ListTile(title: Text('A')),
+                70: const ListTile(title: Text('4')),
+              },
+            ),
           ),
-        ),
-        SizedBox(
-          height: 300 * 20,
-          width: 40,
-          child: TimeLine(
-            controller: _controllerCenter,
-            unitHeight: 20,
-            minTime: 0,
-            maxTime: 300,
-            stepSize: 10,
+          const SizedBox(
+            height: 300.0 * _kUnitHeight,
+            width: 40,
+            child: TimeLine(
+              unitHeight: _kUnitHeight,
+              minTime: 0,
+              maxTime: 300,
+              stepSize: 10,
+            ),
           ),
-        ),
-        Expanded(
-          child: PositionedListView(
-            unitHeight: 20,
-            controller: _controllerRight,
-            children: {
-              1: const ListTile(title: Text('1')),
-              3: const ListTile(title: Text('2')),
-              4: const ListTile(title: Text('3')),
-              10: const ListTile(title: Text('B')),
-              70: const ListTile(title: Text('4')),
-            },
+          SizedBox(
+            height: _kUnitHeight * 70 + 100,
+            width: MediaQuery.of(context).size.width / 2 - 20,
+            child: PositionedListView(
+              unitHeight: _kUnitHeight,
+              children: {
+                1: const ListTile(title: Text('1')),
+                3: const ListTile(title: Text('2')),
+                4: const ListTile(title: Text('3')),
+                10: const ListTile(title: Text('B')),
+                70: const ListTile(title: Text('4')),
+              },
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     )
   );
 }
