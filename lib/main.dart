@@ -30,7 +30,7 @@ class TimeLineHome extends StatefulWidget {
 }
 
 class _TimeLineHomeState extends State<TimeLineHome> {
-  static const double _kUnitHeight = 10.0;
+  static const double _kUnitHeight = 20.0;
 
   // String? titleLeft, titleRight;
 
@@ -60,13 +60,13 @@ class _TimeLineHomeState extends State<TimeLineHome> {
           ),
           const Spacer(),
           SizedBox(
-              width: MediaQuery.of(context).size.width / 2 - 18,
-              child: const TextField(
-                decoration: InputDecoration(
-                  hintText: 'Untitled right column'
-                ),
-                textAlign: TextAlign.end,
-              )
+            width: MediaQuery.of(context).size.width / 2 - 18,
+            child: const TextField(
+              decoration: InputDecoration(
+                hintText: 'Untitled right column'
+              ),
+              textAlign: TextAlign.end,
+            )
           ),
         ],
       ),
@@ -81,6 +81,7 @@ class _TimeLineHomeState extends State<TimeLineHome> {
             child: PositionedListView(
               unitHeight: _kUnitHeight,
               children: {
+                0: Container(color: Colors.red, height: 10,),
                 1: const ListTile(title: Text('1')),
                 3: const ListTile(title: Text('2')),
                 4: const ListTile(title: Text('3')),
@@ -90,7 +91,7 @@ class _TimeLineHomeState extends State<TimeLineHome> {
             ),
           ),
           const SizedBox(
-            height: 300.0 * _kUnitHeight,
+            height: 70 * _kUnitHeight + 100,
             width: 40,
             child: TimeLine(
               unitHeight: _kUnitHeight,
