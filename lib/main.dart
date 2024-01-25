@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:timeline_editor/positioned_list_view.dart';
 import 'package:timeline_editor/timeline.dart';
+import 'package:timeline_editor/value_input.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,6 +17,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
+        inputDecorationTheme: InputDecorationTheme(
+          border: OutlineInputBorder(),
+        )
       ),
       home: const TimeLineHome(),
     );
@@ -51,7 +55,7 @@ class _TimeLineHomeState extends State<TimeLineHome> {
         mainAxisSize: MainAxisSize.min,
         children: [
           SizedBox(
-            width: MediaQuery.of(context).size.width / 2 - 18,
+            width: MediaQuery.of(context).size.width / 2 - 17,
             child: const TextField(
               decoration: InputDecoration(
                   hintText: 'Untitled left column'
@@ -60,7 +64,7 @@ class _TimeLineHomeState extends State<TimeLineHome> {
           ),
           const Spacer(),
           SizedBox(
-            width: MediaQuery.of(context).size.width / 2 - 18,
+            width: MediaQuery.of(context).size.width / 2 - 17,
             child: const TextField(
               decoration: InputDecoration(
                 hintText: 'Untitled right column'
@@ -70,6 +74,30 @@ class _TimeLineHomeState extends State<TimeLineHome> {
           ),
         ],
       ),
+    ),
+    extendBody: true,
+    bottomNavigationBar: Row(
+      children: [
+        Container(
+          color: Colors.white,
+          width: MediaQuery.of(context).size.width / 2 - 16,
+          child: ValueInput(
+            callback: (_, __) {
+              // TODO
+            }
+          ),
+        ),
+        const Spacer(),
+        Container(
+          color: Colors.white,
+          width: MediaQuery.of(context).size.width / 2 - 16,
+          child: ValueInput(
+            callback: (_, __) {
+              // TODO
+            }
+          ),
+        ),
+      ]
     ),
     body: SingleChildScrollView(
       child: Row(
@@ -81,7 +109,7 @@ class _TimeLineHomeState extends State<TimeLineHome> {
             child: PositionedListView(
               unitHeight: _kUnitHeight,
               children: {
-                0: Container(color: Colors.red, height: 10,),
+                0: Container(color: Colors.red, height: 1,),
                 1: const ListTile(title: Text('1')),
                 3: const ListTile(title: Text('2')),
                 4: const ListTile(title: Text('3')),
