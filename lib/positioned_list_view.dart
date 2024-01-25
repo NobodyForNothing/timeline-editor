@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 class PositionedListView extends StatelessWidget {
@@ -14,8 +15,10 @@ class PositionedListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final positions = children.keys.toList();
-    final values = children.values.toList();
+    final entries = children.entries.toList();
+    entries.sort((a,b) => a.key.compareTo(b.key));
+    final positions = entries.map((e) => e.key).toList();
+    final values = entries.map((e) => e.value).toList();
     return ListView.builder(
       physics: const NeverScrollableScrollPhysics(),
       itemCount: positions.length,

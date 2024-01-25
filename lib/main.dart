@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:timeline_editor/positioned_list_view.dart';
 import 'package:timeline_editor/timeline.dart';
@@ -35,6 +38,26 @@ class TimeLineHome extends StatefulWidget {
 
 class _TimeLineHomeState extends State<TimeLineHome> {
   static const double _kUnitHeight = 20.0;
+
+  final Map<double, Widget> _eventsLeft = {
+    100: const ListTile(title: Text('data'),),
+    110: const ListTile(title: Text('data2'),),
+  };
+  final Map<double, Widget> _eventsRight = {
+    90: const ListTile(title: Text('data'),),
+  };
+
+  double? get _minTime => (_eventsLeft.isEmpty || _eventsRight.isEmpty)
+      ? null
+      : min(_eventsLeft.keys.min, _eventsRight.keys.min);
+
+  double? get _maxTime => (_eventsLeft.isEmpty || _eventsRight.isEmpty)
+      ? null
+      : max(_eventsLeft.keys.max, _eventsRight.keys.max);
+
+  double get _eventsHeight => (_maxTime == null || _minTime == null)
+      ? 0.0
+      : (_maxTime! - _minTime!);
 
   // String? titleLeft, titleRight;
 
@@ -82,8 +105,12 @@ class _TimeLineHomeState extends State<TimeLineHome> {
           color: Colors.white,
           width: MediaQuery.of(context).size.width / 2 - 16,
           child: ValueInput(
-            callback: (_, __) {
-              // TODO
+            callback: (year, note) {
+              setState(() {
+                _eventsLeft[year.toDouble()] = ListTile(
+                  title: Text(note)
+                );
+              });
             }
           ),
         ),
@@ -92,8 +119,12 @@ class _TimeLineHomeState extends State<TimeLineHome> {
           color: Colors.white,
           width: MediaQuery.of(context).size.width / 2 - 16,
           child: ValueInput(
-            callback: (_, __) {
-              // TODO
+            callback: (year, note) {
+              setState(() {
+                _eventsRight[year.toDouble()] = ListTile(
+                  title: Text(note)
+                );
+              });
             }
           ),
         ),
@@ -105,41 +136,28 @@ class _TimeLineHomeState extends State<TimeLineHome> {
         children: [
           SizedBox(
             width: MediaQuery.of(context).size.width / 2 - 20,
-            height: _kUnitHeight * 70 + 100,
+            height: _kUnitHeight * _eventsHeight + 100,
             child: PositionedListView(
               unitHeight: _kUnitHeight,
-              children: {
-                0: Container(color: Colors.red, height: 1,),
-                1: const ListTile(title: Text('1')),
-                3: const ListTile(title: Text('2')),
-                4: const ListTile(title: Text('3')),
-                12: const ListTile(title: Text('A')),
-                70: const ListTile(title: Text('4')),
-              },
+              children: _eventsLeft,
             ),
           ),
-          const SizedBox(
-            height: 70 * _kUnitHeight + 100,
+          SizedBox(
+            height: _kUnitHeight * _eventsHeight + 100,
             width: 40,
             child: TimeLine(
               unitHeight: _kUnitHeight,
-              minTime: 0,
-              maxTime: 300,
+              minTime: _minTime?.floor() ?? 0,
+              maxTime: _maxTime?.ceil() ?? 1,
               stepSize: 10,
             ),
           ),
           SizedBox(
-            height: _kUnitHeight * 70 + 100,
+            height: _kUnitHeight * _eventsHeight + 100,
             width: MediaQuery.of(context).size.width / 2 - 20,
             child: PositionedListView(
               unitHeight: _kUnitHeight,
-              children: {
-                1: const ListTile(title: Text('1')),
-                3: const ListTile(title: Text('2')),
-                4: const ListTile(title: Text('3')),
-                10: const ListTile(title: Text('B')),
-                70: const ListTile(title: Text('4')),
-              },
+              children: _eventsRight
             ),
           ),
         ],
