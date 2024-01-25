@@ -39,12 +39,12 @@ class TimeLineHome extends StatefulWidget {
 class _TimeLineHomeState extends State<TimeLineHome> {
   static const double _kUnitHeight = 20.0;
 
-  final Map<double, Widget> _eventsLeft = {
-    100: const ListTile(title: Text('data'),),
-    110: const ListTile(title: Text('data2'),),
+  final Map<double, String> _eventsLeft = {
+    100: 'data',
+    110: 'data2',
   };
-  final Map<double, Widget> _eventsRight = {
-    90: const ListTile(title: Text('data'),),
+  final Map<double, String> _eventsRight = {
+    90: 'data',
   };
 
   double? get _minTime => (_eventsLeft.isEmpty || _eventsRight.isEmpty)
@@ -107,9 +107,7 @@ class _TimeLineHomeState extends State<TimeLineHome> {
           child: ValueInput(
             callback: (year, note) {
               setState(() {
-                _eventsLeft[year.toDouble()] = ListTile(
-                  title: Text(note)
-                );
+                _eventsLeft[year.toDouble()] = note;
               });
             }
           ),
@@ -121,9 +119,7 @@ class _TimeLineHomeState extends State<TimeLineHome> {
           child: ValueInput(
             callback: (year, note) {
               setState(() {
-                _eventsRight[year.toDouble()] = ListTile(
-                  title: Text(note)
-                );
+                _eventsRight[year.toDouble()] = note;
               });
             }
           ),
@@ -139,7 +135,10 @@ class _TimeLineHomeState extends State<TimeLineHome> {
             height: _kUnitHeight * _eventsHeight + 100,
             child: PositionedListView(
               unitHeight: _kUnitHeight,
-              children: _eventsLeft,
+              children: _eventsLeft.map((key, value) => MapEntry(key, ListTile(
+                title: Text(value),
+                leading: Text(key.round().toString()),
+              ))),
             ),
           ),
           SizedBox(
@@ -157,7 +156,10 @@ class _TimeLineHomeState extends State<TimeLineHome> {
             width: MediaQuery.of(context).size.width / 2 - 20,
             child: PositionedListView(
               unitHeight: _kUnitHeight,
-              children: _eventsRight
+              children: _eventsRight.map((key, value) => MapEntry(key, ListTile(
+                title: Text(value),
+                leading: Text(key.round().toString()),
+              )))
             ),
           ),
         ],
@@ -165,3 +167,4 @@ class _TimeLineHomeState extends State<TimeLineHome> {
     )
   );
 }
+// TODO: fix start offset different on both sides
