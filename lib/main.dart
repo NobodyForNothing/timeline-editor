@@ -47,10 +47,12 @@ class _TimeLineHomeState extends State<TimeLineHome> {
     90: 'data',
   };
 
+  /// The first time in both [_eventsLeft] and [_eventsRight]
   double? get _minTime => (_eventsLeft.isEmpty || _eventsRight.isEmpty)
       ? null
       : min(_eventsLeft.keys.min, _eventsRight.keys.min);
 
+  /// The last time in both [_eventsLeft] and [_eventsRight]
   double? get _maxTime => (_eventsLeft.isEmpty || _eventsRight.isEmpty)
       ? null
       : max(_eventsLeft.keys.max, _eventsRight.keys.max);
@@ -135,6 +137,7 @@ class _TimeLineHomeState extends State<TimeLineHome> {
             height: _kUnitHeight * _eventsHeight + 100,
             child: PositionedListView(
               unitHeight: _kUnitHeight,
+              startPos: _minTime ?? 0,
               children: _eventsLeft.map((key, value) => MapEntry(key, ListTile(
                 title: Text(value),
                 leading: Text(key.round().toString()),
@@ -156,6 +159,7 @@ class _TimeLineHomeState extends State<TimeLineHome> {
             width: MediaQuery.of(context).size.width / 2 - 20,
             child: PositionedListView(
               unitHeight: _kUnitHeight,
+                startPos: _minTime ?? 0,
               children: _eventsRight.map((key, value) => MapEntry(key, ListTile(
                 title: Text(value),
                 leading: Text(key.round().toString()),
@@ -167,4 +171,3 @@ class _TimeLineHomeState extends State<TimeLineHome> {
     )
   );
 }
-// TODO: fix start offset different on both sides
