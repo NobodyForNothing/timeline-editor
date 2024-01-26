@@ -37,7 +37,7 @@ class TimeLineHome extends StatefulWidget {
 }
 
 class _TimeLineHomeState extends State<TimeLineHome> {
-  static const double _kUnitHeight = 20.0;
+  static const double _kDefaultUnitHeight = 20.0;
 
   final Map<double, String> _eventsLeft = {
     100: 'data',
@@ -46,6 +46,8 @@ class _TimeLineHomeState extends State<TimeLineHome> {
   final Map<double, String> _eventsRight = {
     90: 'data',
   };
+
+  double _scale = _kDefaultUnitHeight;
 
   /// The first time in both [_eventsLeft] and [_eventsRight]
   double? get _minTime => (_eventsLeft.isEmpty || _eventsRight.isEmpty)
@@ -57,6 +59,7 @@ class _TimeLineHomeState extends State<TimeLineHome> {
       ? null
       : max(_eventsLeft.keys.max, _eventsRight.keys.max);
 
+  /// Difference between the earliest and the latest events on record.
   double get _eventsHeight => (_maxTime == null || _minTime == null)
       ? 0.0
       : (_maxTime! - _minTime!);
@@ -128,15 +131,40 @@ class _TimeLineHomeState extends State<TimeLineHome> {
         ),
       ]
     ),
+    floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
+    floatingActionButton: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const SizedBox(height: 110,),
+        IconButton.outlined(
+          onPressed: () {
+            setState(() {
+              _scale *= 2;
+            });
+          },
+          icon: const Icon(Icons.zoom_in)
+        ),
+        Text(_scale.toString()),
+        IconButton.outlined(
+            onPressed: () {
+              setState(() {
+                _scale /= 2;
+                if (_scale <= 0) _scale = 1;
+              });
+            },
+            icon: const Icon(Icons.zoom_out)
+        ),
+      ],
+    ),
     body: SingleChildScrollView(
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           SizedBox(
             width: MediaQuery.of(context).size.width / 2 - 20,
-            height: _kUnitHeight * _eventsHeight + 100,
+            height: _scale * _eventsHeight + 100,
             child: PositionedListView(
-              unitHeight: _kUnitHeight,
+              unitHeight: _scale,
               startPos: _minTime ?? 0,
               children: _eventsLeft.map((key, value) => MapEntry(key, ListTile(
                 title: Text(value),
@@ -145,20 +173,20 @@ class _TimeLineHomeState extends State<TimeLineHome> {
             ),
           ),
           SizedBox(
-            height: _kUnitHeight * _eventsHeight + 100,
+            height: _scale * _eventsHeight + 100,
             width: 40,
             child: TimeLine(
-              unitHeight: _kUnitHeight,
-              minTime: _minTime?.floor() ?? 0,
-              maxTime: _maxTime?.ceil() ?? 1,
-              stepSize: 10,
+              unitHeight: _scale,
+              minTime: _minTime ?? 0.0,
+              maxTime: _maxTime ?? 1.0,
+              stepSize: 10.0,
             ),
           ),
           SizedBox(
-            height: _kUnitHeight * _eventsHeight + 100,
+            height: _scale * _eventsHeight + 100,
             width: MediaQuery.of(context).size.width / 2 - 20,
             child: PositionedListView(
-              unitHeight: _kUnitHeight,
+              unitHeight: _scale,
                 startPos: _minTime ?? 0,
               children: _eventsRight.map((key, value) => MapEntry(key, ListTile(
                 title: Text(value),
