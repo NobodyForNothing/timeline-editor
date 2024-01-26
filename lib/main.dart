@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:timeline_editor/positioned_list_view.dart';
 import 'package:timeline_editor/timeline.dart';
 import 'package:timeline_editor/value_input.dart';
@@ -39,11 +41,11 @@ class TimeLineHome extends StatefulWidget {
 class _TimeLineHomeState extends State<TimeLineHome> {
   static const double _kDefaultUnitHeight = 20.0;
 
-  final Map<double, String> _eventsLeft = {
+  Map<double, String> _eventsLeft = {
     100: 'data',
     110: 'data2',
   };
-  final Map<double, String> _eventsRight = {
+  Map<double, String> _eventsRight = {
     90: 'data',
   };
 
@@ -64,43 +66,105 @@ class _TimeLineHomeState extends State<TimeLineHome> {
       ? 0.0
       : (_maxTime! - _minTime!);
 
-  // String? titleLeft, titleRight;
+  late final TextEditingController leftTitleController;
+  late final TextEditingController rightTitleController;
 
   @override
   void initState() {
     super.initState();
+    leftTitleController = TextEditingController();
+    rightTitleController = TextEditingController();
   }
 
   @override
   void dispose() {
+    leftTitleController.dispose();
+    rightTitleController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(
+      forceMaterialTransparency: true,
       title: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SizedBox(
-            width: MediaQuery.of(context).size.width / 2 - 17,
-            child: const TextField(
-              decoration: InputDecoration(
-                hintText: 'Untitled left column',
-                border: UnderlineInputBorder()
-              ),
-            )
+          Expanded(
+            child: SizedBox(
+              child: TextField(
+                controller: leftTitleController,
+                decoration: const InputDecoration(
+                  hintText: 'Untitled left column',
+                  border: UnderlineInputBorder()
+                ),
+              )
+            ),
           ),
-          const Spacer(),
-          SizedBox(
-            width: MediaQuery.of(context).size.width / 2 - 17,
-            child: const TextField(
-              decoration: InputDecoration(
-                hintText: 'Untitled right column',
-                border: UnderlineInputBorder(),
-              ),
-              textAlign: TextAlign.end,
-            )
+          IconButton(
+            onPressed: () {
+              try {
+                final dataMap = {
+                  'version': 1,
+                  'scale': _scale,
+                  'titleLeft': leftTitleController.text,
+                  'titleRight': rightTitleController.text,
+                  'entriesL': _eventsLeft.map((key, value) => MapEntry(key.toString(), value)),
+                  'entriesR': _eventsRight.map((key, value) => MapEntry(key.toString(), value)),
+                };
+                Clipboard.setData(ClipboardData(text: jsonEncode(dataMap)));
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text('Snapshot copied to clipboard.')));
+              } catch (e, stackTrace) {
+                debugPrint(e.toString());
+                debugPrint(stackTrace.toString());
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('Failed to copy snapshot to clipboard: $e')));
+              }
+            },
+            tooltip: 'Save',
+            icon: const Icon(Icons.copy)
+          ),
+          IconButton(
+            onPressed: () async {
+              final messenger = ScaffoldMessenger.of(context);
+              try {
+                final data = await Clipboard.getData('text/plain');
+                final dataMap = jsonDecode(data?.text ?? '');
+                assert(dataMap['version'] == 1);
+                setState(() {
+                  _scale = dataMap['scale'];
+                  leftTitleController.text = dataMap['titleLeft'];
+                  rightTitleController.text = dataMap['titleRight'];
+                  _eventsLeft = (dataMap['entriesL'] as Map<String, dynamic>)
+                      .map((key, value) => MapEntry(double.parse(key), value));
+                  _eventsRight = (dataMap['entriesR'] as Map<String, dynamic>)
+                      .map((key, value) => MapEntry(double.parse(key), value));
+                });
+                messenger.showSnackBar(const SnackBar(
+                    content: Text('Successfully loaded data from clipboard.')));
+              } catch (e, stackTrace) {
+                debugPrint(e.toString());
+                debugPrint(stackTrace.toString());
+                messenger.showSnackBar(SnackBar(
+                    content: Text('Could not load data from clipboard: $e')));
+              }
+
+            },
+            tooltip: 'Load',
+            icon: const Icon(Icons.paste)
+          ),
+          Expanded(
+            child: SizedBox(
+              child: TextField(
+                controller: rightTitleController,
+                decoration: const InputDecoration(
+                  hintText: 'Untitled right column',
+                  border: UnderlineInputBorder(),
+                ),
+                textAlign: TextAlign.end,
+              )
+            ),
           ),
         ],
       ),
