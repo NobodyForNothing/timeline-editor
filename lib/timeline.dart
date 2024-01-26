@@ -42,7 +42,7 @@ class TimeLine extends StatelessWidget {
         return SizedBox(
           height: _kLabelHeight,
           child: Center(
-            child: Text((minTime + stepSize * (idx ~/ 2)).toString())
+            child: Text((minTime + stepSize * (idx / 2)).round().toString())
           ),
         );
       },

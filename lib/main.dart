@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
-        inputDecorationTheme: InputDecorationTheme(
+        inputDecorationTheme: const InputDecorationTheme(
           border: OutlineInputBorder(),
         )
       ),
@@ -86,7 +86,8 @@ class _TimeLineHomeState extends State<TimeLineHome> {
             width: MediaQuery.of(context).size.width / 2 - 17,
             child: const TextField(
               decoration: InputDecoration(
-                  hintText: 'Untitled left column'
+                hintText: 'Untitled left column',
+                border: UnderlineInputBorder()
               ),
             )
           ),
@@ -95,7 +96,8 @@ class _TimeLineHomeState extends State<TimeLineHome> {
             width: MediaQuery.of(context).size.width / 2 - 17,
             child: const TextField(
               decoration: InputDecoration(
-                hintText: 'Untitled right column'
+                hintText: 'Untitled right column',
+                border: UnderlineInputBorder(),
               ),
               textAlign: TextAlign.end,
             )
